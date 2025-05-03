@@ -6,6 +6,8 @@ const dotenv = require('dotenv');
 
 dotenv.config();
 
+app.use(express.json());
+
 const projectRoutes = require('./routes/projects.routes.js');
 
 const topicRoutes = require('./routes/topics.routes.js');
