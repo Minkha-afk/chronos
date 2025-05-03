@@ -1,7 +1,7 @@
 const pool = require('../db/db.js');
 
 const registerUser = async (req, res) => {
-    const { username, email, password } = req.body;
+    const { username, email, password, role } = req.body;
     try {
       console.log(username)
   
@@ -11,7 +11,7 @@ const registerUser = async (req, res) => {
   
       console.log('User:', { username, email, password });
   
-      await pool.query(`INSERT INTO users (username, email, password) VALUES ($1, $2, $3)`, [username, email, password]);
+      await pool.query(`INSERT INTO users (username, email, password, role) VALUES ($1, $2, $3, $4)`, [username, email, password, role]);
 
       res.status(200).json({ message: 'User registered successfully' });
     } catch (error) {
