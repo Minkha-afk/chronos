@@ -1,6 +1,9 @@
+const pool = require('../db/db.js');
+
 const registerUser = async (req, res) => {
+    const { username, email, password } = req.body;
     try {
-      const { username, email, password } = req.body;
+      console.log(username)
   
       if (!username || !email || !password) {
         return res.status(400).json({ message: 'All fields are required.' });
@@ -8,7 +11,9 @@ const registerUser = async (req, res) => {
   
       console.log('User:', { username, email, password });
   
-      res.status(201).json({ message: 'User registered successfully.' });
+      await pool.query(`INSERT INTO users (username, email, password) VALUES ($1, $2, $3)`, [username, email, password]);
+
+      res.status(200).json({ message: 'User registered successfully' });
     } catch (error) {
       res.status(500).json({ message: 'Server error', error: error.message });
     }
