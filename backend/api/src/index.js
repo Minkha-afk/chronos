@@ -6,6 +6,10 @@ const dotenv = require('dotenv');
 
 dotenv.config();
 
+const projectRoutes = require('./routes/projects.routes.js');
+
+app.use('/', projectRoutes);
+
 const PORT = process.env.PORT || 8081;
 
 app.listen(PORT, () => {
