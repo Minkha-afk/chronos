@@ -1,49 +1,50 @@
 const pool = require('../db/db.js');
 
-const getProjects = async(req, res) => {
-  try{
+const getProjects = async (req, res) => {
+  try {
+    const projects = await pool.query(`SELECT * FROM projects ORDER BY created_at DESC`);
+    res.status(200).json({ projects: projects.rows });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
 
-  }
-  catch(err){
-    console.log(err.message);
-  }
-}
+const slugify = (text) =>
+  text
+    .toString()
+    .toLowerCase()
+    .trim()
+    .replace(/[\s\W-]+/g, '_'); // convert spaces and symbols to underscores
 
 const addProject = async (req, res) => {
   const { username, projectName } = req.body;
 
   try {
-    const getRole = await pool.query(`SELECT * FROM users WHERE username = $1`, [username]);
+    const getUser = await pool.query(`SELECT * FROM users WHERE username = $1`, [username]);
 
-    if (getRole.rows.length > 0) {
-      const role = getRole.rows[0].role;
-
-      if (role === 'admin') {
-        // Sanitize table name
-        const sanitizedProjectName = projectName.replace(/[^a-zA-Z0-9_]/g, '');
-        const projectTable = `${sanitizedProjectName}_table`;
-
-        // Create table
-        await pool.query(`
-          CREATE TABLE ${projectTable} (
-            id SERIAL PRIMARY KEY,
-            topic VARCHAR(250) NOT NULL,
-            topic_description VARCHAR(250) NOT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            is_active BOOLEAN DEFAULT TRUE
-          );
-        `);
-
-        res.status(201).json({ message: `Project '${projectName}' created successfully.` });
-      } else {
-        res.status(403).json({ message: 'You need to be admin to add a project!' });
-      }
-    } else {
-      res.status(404).json({ message: 'User does not exist!' });
+    if (getUser.rows.length === 0) {
+      return res.status(404).json({ message: 'User does not exist!' });
     }
+
+    const role = getUser.rows[0].role;
+
+    if (role !== 'admin') {
+      return res.status(403).json({ message: 'You need to be admin to add a project!' });
+    }
+
+    const projectId = slugify(projectName);
+
+    // Insert into single `projects` table
+    await pool.query(
+      `INSERT INTO projects (project_name, project_id) VALUES ($1, $2)`,
+      [projectName, projectId]
+    );
+
+    res.status(201).json({ message: `Project '${projectName}' created successfully.` });
+
   } catch (err) {
-    console.log(err.message);
+    console.error(err.message);
     res.status(500).json({ message: 'Internal server error' });
   }
 };
