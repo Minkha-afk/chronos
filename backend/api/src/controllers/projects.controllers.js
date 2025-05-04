@@ -18,7 +18,7 @@ const slugify = (text) =>
     .replace(/[\s\W-]+/g, '_'); // convert spaces and symbols to underscores
 
 const addProject = async (req, res) => {
-  const { username, projectName } = req.body;
+  const { username, projectName, github_repo } = req.body;
 
   try {
     const getUser = await pool.query(`SELECT * FROM users WHERE username = $1`, [username]);
@@ -37,8 +37,8 @@ const addProject = async (req, res) => {
 
     // Insert into single `projects` table
     await pool.query(
-      `INSERT INTO projects (project_name, project_id) VALUES ($1, $2)`,
-      [projectName, projectId]
+      `INSERT INTO projects (project_name, project_id, github_repo) VALUES ($1, $2)`,
+      [projectName, projectId, github_repo]
     );
 
     res.status(201).json({ message: `Project '${projectName}' created successfully.` });
