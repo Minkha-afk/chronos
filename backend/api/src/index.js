@@ -2,9 +2,13 @@ const express = require('express');
 
 const app = express();
 
+const mongoose = require('mongoose');
+
 const dotenv = require('dotenv');
 
 dotenv.config();
+
+mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 
 app.use(express.json());
 
@@ -12,9 +16,13 @@ const projectRoutes = require('./routes/projects.routes.js');
 
 const topicRoutes = require('./routes/topics.routes.js');
 
-app.use('/', projectRoutes);
+const contributorRoutes = require('./routes/contributor.routes.js');
 
-app.use('/', topicRoutes);
+app.use('/api/', projectRoutes);
+
+app.use('/api/', topicRoutes);
+
+app.use('/api/', contributorRoutes);
 
 const PORT = process.env.PORT || 8081;
 

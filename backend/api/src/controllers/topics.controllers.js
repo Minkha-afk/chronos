@@ -10,6 +10,13 @@ const getTopics = async (req, res) => {
   }
 };
 
+const slugify = (text) =>
+  text
+    .toString()
+    .toLowerCase()
+    .trim()
+    .replace(/[\s\W-]+/g, '_'); // convert spaces and symbols to underscores
+
 const addTopic = async (req, res) => {
   const { username, projectId, topic, topicDescription } = req.body;
 
@@ -35,12 +42,14 @@ const addTopic = async (req, res) => {
     }
 
     const projectRow = projectQuery.rows[0];
+    
+    const topicId = slugify(topic);
 
     // Insert topic
     await pool.query(
-      `INSERT INTO topics (project_id, topic, topic_description)
-       VALUES ($1, $2, $3)`,
-      [projectRow.id, topic, topicDescription]
+      `INSERT INTO topics (project_id, topic, topic_description, topic_id)
+       VALUES ($1, $2, $3, $4)`,
+      [projectRow.id, topic, topicDescription, topicId]
     );
 
     res.status(201).json({ message: `Topic '${topic}' added to project '${projectRow.project_name}' successfully.` });
