@@ -1,16 +1,24 @@
 'use client';
 
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 import Link from 'next/link';
 import { FaTasks, FaProjectDiagram, FaBug, FaBook } from 'react-icons/fa';
 
-export default function Sidebar() {
+export default function Sidebar({}) {
   const [active, setActive] = useState('/dashboard');
-
+  const [userRole,setUserRole] = useState<string | null>(null);
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const role = localStorage.getItem('userRole');
+      setUserRole(role);
+    }
+  }, []);
   const navItems = [
     { label: 'Dashboard', icon: <FaTasks />, href: '/dashboard' },
     { label: 'Projects', icon: <FaProjectDiagram />, href: '/projects' },
-    { label: 'Issues', icon: <FaBug />, href: '/issues' },
+    ...(userRole === 'admin'
+      ? [{ label: 'Manage', icon: <FaBug />, href: '/issues' }]
+      : []),
     { label: 'Docs', icon: <FaBook />, href: '/docs' },
   ];
 

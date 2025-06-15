@@ -10,6 +10,7 @@ import {
 } from 'react-icons/fa';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { motion } from 'framer-motion';
 
 export default function LoginPage() {
   const [form, setForm] = useState({ username: '', password: '' });
@@ -32,17 +33,31 @@ export default function LoginPage() {
       const data = await res.json();
       setMessage(data.message);
 
-      if (res.ok) {
+      if (res.ok && data.role) {
+         
+        localStorage.setItem('userRole', data.role);
+
+        
+        localStorage.setItem('username', data.username);
+
         setMessage('Login successful! Redirecting...');
         router.push('/dashboard');
       }
     } catch (err) {
+      console.error('Login error:', err);
       setMessage('Login failed. Please try again.');
     }
   };
 
+
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-[#F4F5F7] py-2">
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -30 }}
+      transition={{ duration: 0.4, ease: 'easeOut' }}
+      className="flex flex-col items-center justify-center min-h-screen bg-[#F4F5F7] py-2"
+    >
       <main className="flex flex-col items-center justify-center w-full flex-1 px-4 sm:px-20 text-center">
         <div className="bg-white rounded-2xl shadow-2xl flex w-full max-w-4xl overflow-hidden">
           {/* Left: Login Form */}
@@ -124,6 +139,6 @@ export default function LoginPage() {
           </div>
         </div>
       </main>
-    </div>
+    </motion.div>
   );
 }
