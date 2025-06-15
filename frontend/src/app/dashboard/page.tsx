@@ -1,6 +1,4 @@
 'use client';
- 
-
 import Navbar from '../components/layout/Navbar';
 import Sidebar from '../components/layout/Sidebar';
 import Work from '../components/dashboard/Work';

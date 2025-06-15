@@ -14,7 +14,13 @@ const loginRoutes = require('./routes/login.routes');
 
 const registerRoutes = require('./routes/register.routes');
 
+const userRoutes = require('./routes/user.routes');
+
 app.use('/', loginRoutes); // Use the login routes
+
+app.use('/', userRoutes);
+console.log('DB USER:', process.env.POSTGRES_USER);
+console.log('DB PASSWORD:', process.env.POSTGRES_PASSWORD);
 
 app.use('/', registerRoutes); // Use the register routes
 

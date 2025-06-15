@@ -1,18 +1,19 @@
+You said:
 "use client";
-import React, { useState, useEffect } from 'react';
-import { Plus, Search, Filter, Grid, List, MoreVertical, Users, Star, X, ChevronDown, Check } from 'lucide-react';
-
+import React, { useState ,useEffect} from 'react';
+import { Plus, Search, Filter, Grid, List, MoreVertical, Users, Star, X } from 'lucide-react';
+import axios from 'axios';
 const JiraProjectsGrid = () => {
   const [projects, setProjects] = useState([
-    { id: 1, name: 'E-commerce Platform', key: 'ECP', type: 'Software', members: 12, issues: 45, progress: 78, starred: true, color: 'bg-gradient-to-br from-blue-400 to-blue-600', assignedEmployees: [] },
-    { id: 2, name: 'Mobile App Redesign', key: 'MAR', type: 'Design', members: 8, issues: 23, progress: 45, starred: false, color: 'bg-gradient-to-br from-purple-400 to-purple-600', assignedEmployees: [] },
-    { id: 3, name: 'Data Analytics Dashboard', key: 'DAD', type: 'Analytics', members: 6, issues: 17, progress: 92, starred: true, color: 'bg-gradient-to-br from-green-400 to-green-600', assignedEmployees: [] },
-    { id: 4, name: 'Customer Support Portal', key: 'CSP', type: 'Software', members: 10, issues: 31, progress: 65, starred: false, color: 'bg-gradient-to-br from-orange-400 to-orange-600', assignedEmployees: [] },
-    { id: 5, name: 'Marketing Campaign', key: 'MC', type: 'Marketing', members: 5, issues: 12, progress: 34, starred: false, color: 'bg-gradient-to-br from-pink-400 to-pink-600', assignedEmployees: [] },
-    { id: 6, name: 'API Integration', key: 'API', type: 'Backend', members: 4, issues: 19, progress: 87, starred: true, color: 'bg-gradient-to-br from-teal-400 to-teal-600', assignedEmployees: [] },
-    { id: 7, name: 'Security Audit', key: 'SA', type: 'Security', members: 3, issues: 8, progress: 23, starred: false, color: 'bg-gradient-to-br from-red-400 to-red-600', assignedEmployees: [] },
-    { id: 8, name: 'Performance Optimization', key: 'PO', type: 'DevOps', members: 7, issues: 25, progress: 56, starred: false, color: 'bg-gradient-to-br from-indigo-400 to-indigo-600', assignedEmployees: [] },
-    { id: 9, name: 'Performance Optimization', key: 'POO', type: 'DevOps', members: 5, issues: 245, progress: 96, starred: false, color: 'bg-gradient-to-br from-pink-400 to-black-600', assignedEmployees: [] }
+    { id: 1, name: 'E-commerce Platform', key: 'ECP', type: 'Software', members: 12, issues: 45, progress: 78, starred: true, color: 'bg-gradient-to-br from-blue-400 to-blue-600' },
+    { id: 2, name: 'Mobile App Redesign', key: 'MAR', type: 'Design', members: 8, issues: 23, progress: 45, starred: false, color: 'bg-gradient-to-br from-purple-400 to-purple-600' },
+    { id: 3, name: 'Data Analytics Dashboard', key: 'DAD', type: 'Analytics', members: 6, issues: 17, progress: 92, starred: true, color: 'bg-gradient-to-br from-green-400 to-green-600' },
+    { id: 4, name: 'Customer Support Portal', key: 'CSP', type: 'Software', members: 10, issues: 31, progress: 65, starred: false, color: 'bg-gradient-to-br from-orange-400 to-orange-600' },
+    { id: 5, name: 'Marketing Campaign', key: 'MC', type: 'Marketing', members: 5, issues: 12, progress: 34, starred: false, color: 'bg-gradient-to-br from-pink-400 to-pink-600' },
+    { id: 6, name: 'API Integration', key: 'API', type: 'Backend', members: 4, issues: 19, progress: 87, starred: true, color: 'bg-gradient-to-br from-teal-400 to-teal-600' },
+    { id: 7, name: 'Security Audit', key: 'SA', type: 'Security', members: 3, issues: 8, progress: 23, starred: false, color: 'bg-gradient-to-br from-red-400 to-red-600' },
+    { id: 8, name: 'Performance Optimization', key: 'PO', type: 'DevOps', members: 7, issues: 25, progress: 56, starred: false, color: 'bg-gradient-to-br from-indigo-400 to-indigo-600' },
+    { id: 9, name: 'Performance Optimization', key: 'POO', type: 'DevOps', members: 5, issues: 245, progress: 96, starred: false, color: 'bg-gradient-to-br from-pink-400 to-black-600' } 
   ]);
 
   const [viewMode, setViewMode] = useState('grid');
@@ -21,30 +22,27 @@ const JiraProjectsGrid = () => {
   const [formData, setFormData] = useState({
     name: '',
     key: '',
-    type: 'Software',
+    type: '',
     description: '',
     members: 1,
-    selectedEmployees: []
-  }); 
-
-  const [employeeList, setEmployeeList] = useState([]);
-  const [isEmployeeDropdownOpen, setIsEmployeeDropdownOpen] = useState(false);
+    employee: ''
+  });
 
  
+  const [employeeList, setEmployeeList] = useState([]);
+
   useEffect(() => {
-     
-    
     fetch('http://localhost:8080/employees')
       .then(res => res.json())
       .then(data => {
+        // ✅ Your backend gives { employees: [...] }
         setEmployeeList(data.employees);
       })
       .catch(error => {
         console.error('Error fetching employees:', error);
       });
-    
-  }, []);
-
+  }, [])
+ 
   const projectTypes = ['Software', 'Design', 'Analytics', 'Marketing', 'Backend', 'Security', 'DevOps'];
   const gradientColors = [
     'bg-gradient-to-br from-blue-400 to-blue-600',
@@ -86,34 +84,15 @@ const JiraProjectsGrid = () => {
       .substring(0, 4);
   };
 
-  const handleEmployeeSelect = (employee) => {
-    setFormData(prev => {
-      const isSelected = prev.selectedEmployees.some(emp => emp.id === employee.id);
-      
-      if (isSelected) {
-         
-        return {
-          ...prev,
-          selectedEmployees: prev.selectedEmployees.filter(emp => emp.id !== employee.id)
-        };
-      } else {
-         
-        return {
-          ...prev,
-          selectedEmployees: [...prev.selectedEmployees, employee]
-        };
-      }
-    });
-  };
+//const handleInputChangePersonal = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  //const { name, value } = e.target;
+  //setFormData(prev => ({ ...prev, [name]: value }));
+//};
 
-  const handleCreateProject = () => {
+
+  const handleCreateProject = () => {    
     if (!formData.name.trim()) {
       alert('Project name is required');
-      return;
-    }
-
-    if (!formData.type) {
-      alert('Project type is required');
       return;
     }
     
@@ -122,12 +101,11 @@ const JiraProjectsGrid = () => {
       name: formData.name,
       key: formData.key || generateProjectKey(formData.name),
       type: formData.type,
-      members: formData.selectedEmployees.length || parseInt(formData.members) || 1,
+      members: parseInt(formData.members) || 1,
       issues: 0,
       progress: 0,
       starred: false,
-      color: gradientColors[Math.floor(Math.random() * gradientColors.length)],
-      assignedEmployees: formData.selectedEmployees
+      color: gradientColors[Math.floor(Math.random() * gradientColors.length)]
     };
 
     setProjects([...projects, newProject]);
@@ -137,24 +115,23 @@ const JiraProjectsGrid = () => {
     setFormData({
       name: '',
       key: '',
-      type: 'Software',
+      type: '',
       description: '',
       members: 1,
-      selectedEmployees: []
+      employee: ''
     });
-    setIsEmployeeDropdownOpen(false);
   };
 
   const ProjectCard = ({ project }) => (
     <div className="bg-white rounded-2xl border border-gray-200 hover:border-blue-400 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden group h-full">
-      <div className={`h-20 ${project.color} relative overflow-hidden`}>
+      <div className={h-20 ${project.color} relative overflow-hidden}>
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-pulse"></div>
         <div className="absolute top-3 right-3 flex space-x-1">
           <button
             onClick={() => toggleStar(project.id)}
-            className={`p-1 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-md transition-colors ${project.starred ? 'text-yellow-300' : 'text-white'}`}
+            className={p-1 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-md transition-colors ${project.starred ? 'text-yellow-300' : 'text-white'}}
           >
-            <Star className={`w-4 h-4 ${project.starred ? 'fill-current' : ''}`} />
+            <Star className={w-4 h-4 ${project.starred ? 'fill-current' : ''}} />
           </button>
           <button className="p-1 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-md text-white">
             <MoreVertical className="w-4 h-4" />
@@ -183,7 +160,7 @@ const JiraProjectsGrid = () => {
           <div className="w-full bg-gray-200 rounded-full h-2">
             <div 
               className="bg-blue-500 h-2 rounded-full transition-all duration-300"
-              style={{ width: `${project.progress}%` }}
+              style={{ width: ${project.progress}% }}
             ></div>
           </div>
         </div>
@@ -242,17 +219,17 @@ const JiraProjectsGrid = () => {
           <div className="flex items-center space-x-2">
             <button
               onClick={() => setViewMode('grid')}
-              className={`p-2 rounded-xl transition-colors ${
+              className={p-2 rounded-xl transition-colors ${
                 viewMode === 'grid' ? 'bg-blue-100 text-blue-600 shadow' : 'text-gray-600 hover:bg-gray-100'
-              }`}
+              }}
             >
               <Grid className="w-5 h-5" />
             </button>
             <button
               onClick={() => setViewMode('list')}
-              className={`p-2 rounded-xl transition-colors ${
+              className={p-2 rounded-xl transition-colors ${
                 viewMode === 'list' ? 'bg-blue-100 text-blue-600 shadow' : 'text-gray-600 hover:bg-gray-100'
-              }`}
+              }}
             >
               <List className="w-5 h-5" />
             </button>
@@ -281,7 +258,7 @@ const JiraProjectsGrid = () => {
               {displayProjects.map((project) => (
                 <div key={project.id} className="grid grid-cols-6 gap-4 p-4 border-b border-gray-100 hover:bg-gray-50 transition-all">
                   <div className="flex items-center space-x-3">
-                    <div className={`w-8 h-8 ${project.color} rounded text-white flex items-center justify-center text-xs font-bold`}>
+                    <div className={w-8 h-8 ${project.color} rounded text-white flex items-center justify-center text-xs font-bold}>
                       {project.key}
                     </div>
                     <div>
@@ -292,7 +269,7 @@ const JiraProjectsGrid = () => {
                   <div className="text-sm text-gray-600">{project.type}</div>
                   <div className="flex items-center">
                     <div className="w-full bg-gray-200 rounded-full h-2 mr-2">
-                      <div className="bg-blue-500 h-2 rounded-full" style={{ width: `${project.progress}%` }}></div>
+                      <div className="bg-blue-500 h-2 rounded-full" style={{ width: ${project.progress}% }}></div>
                     </div>
                     <span className="text-sm text-gray-600">{project.progress}%</span>
                   </div>
@@ -301,9 +278,9 @@ const JiraProjectsGrid = () => {
                   <div className="flex items-center space-x-2">
                     <button
                       onClick={() => toggleStar(project.id)}
-                      className={`p-1 rounded transition-colors ${project.starred ? 'text-yellow-500' : 'text-gray-400 hover:text-gray-600'}`}
+                      className={p-1 rounded transition-colors ${project.starred ? 'text-yellow-500' : 'text-gray-400 hover:text-gray-600'}}
                     >
-                      <Star className={`w-4 h-4 ${project.starred ? 'fill-current' : ''}`} />
+                      <Star className={w-4 h-4 ${project.starred ? 'fill-current' : ''}} />
                     </button>
                     <button className="p-1 rounded text-gray-400 hover:text-gray-600">
                       <MoreVertical className="w-4 h-4" />
@@ -323,7 +300,7 @@ const JiraProjectsGrid = () => {
         )}
       </div>
 
-    
+      {/* Create Project Modal */}
       {isCreateModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-screen overflow-y-auto">
@@ -414,80 +391,44 @@ const JiraProjectsGrid = () => {
                   />
                 </div>
 
-                {/* Employee Assignment */}
+                {/* Initial Team Size */}
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Assign Team Members <span className="text-red-500">*</span>
+                  <label htmlFor="members" className="block text-sm font-semibold text-gray-700 mb-2">
+                    Initial Team Size
                   </label>
-                  <div className="relative">
-                    <button
-                      type="button"
-                      onClick={() => setIsEmployeeDropdownOpen(!isEmployeeDropdownOpen)}
-                      className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent flex items-center justify-between bg-white"
-                    >
-                      <span className="text-left">
-                        {formData.selectedEmployees.length === 0 
-                          ? "Select team members..." 
-                          : `${formData.selectedEmployees.length} employee${formData.selectedEmployees.length > 1 ? 's' : ''} selected`
-                        }
-                      </span>
-                      <ChevronDown className={`w-5 h-5 text-gray-400 transition-transform ${isEmployeeDropdownOpen ? 'rotate-180' : ''}`} />
-                    </button>
-
-                    {isEmployeeDropdownOpen && (
-                      <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-xl shadow-lg max-h-60 overflow-y-auto">
-                        {employeeList.length > 0 ? (
-                          employeeList.map((employee) => (
-                            <div
-                              key={employee.id}
-                              onClick={() => handleEmployeeSelect(employee)}
-                              className="flex items-center justify-between p-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0"
-                            >
-                              <div className="flex-1">
-                                <div className="font-medium text-gray-900">{employee.name || employee.username}</div>
-                                <div className="text-sm text-gray-500">{employee.email}</div>
-                              
-                              </div>
-                              {formData.selectedEmployees.some(emp => emp.id === employee.id) && (
-                                <Check className="w-5 h-5 text-blue-500 flex-shrink-0" />
-                              )}
-                            </div>
-                          ))
-                        ) : (
-                          <div className="p-4 text-center text-gray-500">
-                            No employees available
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Selected Employees Preview */}
-                  {formData.selectedEmployees.length > 0 && (
-                    <div className="mt-3">
-                      <p className="text-xs text-gray-600 mb-2">Selected team members:</p>
-                      <div className="flex flex-wrap gap-2">
-                        {formData.selectedEmployees.map((employee) => (
-                          <div
-                            key={employee.id}
-                            className="flex items-center bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-sm"
-                          >
-                            <span>{employee.name || employee.username}</span>
-                            <button
-                              type="button"
-                              onClick={() => handleEmployeeSelect(employee)}
-                              className="ml-2 text-blue-500 hover:text-blue-700"
-                            >
-                              <X className="w-4 h-4" />
-                            </button>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
+                  <input
+                    type="number"
+                    id="members"
+                    name="members"
+                    value={formData.members}
+                    onChange={handleInputChange}
+                    min="1"
+                    max="100"
+                    className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Number of team members working on this project</p>
                 </div>
               </div>
 
+              {/* Employee Assignment */}
+             <div>
+      <h2 className="text-xl font-bold mb-4">Employee List</h2>
+      {Array.isArray(employeeList) && employeeList.length > 0 ? (
+        <ul className="space-y-2">
+          {employeeList.map(emp => (
+            <li
+              key={emp.id}
+              className="bg-gray-100 p-3 rounded shadow-md hover:bg-gray-200"
+            >
+              <p><strong>Username:</strong> {emp.username}</p>
+              <p><strong>Email:</strong> {emp.email}</p>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p>No employees found.</p>
+      )}
+    </div>
               {/* Form Actions */}
               <div className="flex items-center justify-end space-x-3 mt-8 pt-6 border-t border-gray-200">
                 <button
@@ -513,4 +454,3 @@ const JiraProjectsGrid = () => {
   );
 };
 
-export default JiraProjectsGrid;
