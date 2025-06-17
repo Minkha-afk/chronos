@@ -1,7 +1,7 @@
 "use client"
 import React, { useState } from 'react';
 import { ArrowLeft, Search, MoreHorizontal, User, Calendar, Clock, ChevronDown, Filter, Plus } from 'lucide-react';
-
+import TopicForm from '../components/Projectform/topicform';
 const Topics = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
@@ -43,126 +43,7 @@ const Topics = () => {
       created: '2024-01-15',
       updated: '2024-01-20'
     },
-    {
-      id: 'ECM-2',
-      title: 'Dashboard',
-      description: 'Create admin dashboard with analytics and overview widgets',
-      status: 'Done',
-      priority: 'High',
-      assignee: 'Jane Smith',
-      category: 'UI/UX',
-      created: '2024-01-16',
-      updated: '2024-01-22'
-    },
-    {
-      id: 'ECM-3',
-      title: 'Product Catalog',
-      description: 'Build product browsing interface with search and filter capabilities',
-      status: 'Done',
-      priority: 'High',
-      assignee: 'Mike Johnson',
-      category: 'Features',
-      created: '2024-01-17',
-      updated: '2024-01-25'
-    },
-    {
-      id: 'ECM-4',
-      title: 'Shopping Cart',
-      description: 'Develop shopping cart functionality with add/remove items',
-      status: 'Done',
-      priority: 'High',
-      assignee: 'Sarah Wilson',
-      category: 'Features',
-      created: '2024-01-18',
-      updated: '2024-01-26'
-    },
-    {
-      id: 'ECM-5',
-      title: 'Checkout Process',
-      description: 'Complete payment processing and order completion flow',
-      status: 'Done',
-      priority: 'Critical',
-      assignee: 'David Brown',
-      category: 'Payment',
-      created: '2024-01-19',
-      updated: '2024-01-28'
-    },
-    {
-      id: 'ECM-6',
-      title: 'User Profile',
-      description: 'Build user account management and profile settings page',
-      status: 'Done',
-      priority: 'Medium',
-      assignee: 'Lisa Garcia',
-      category: 'Authentication',
-      created: '2024-01-20',
-      updated: '2024-01-30'
-    },
-    {
-      id: 'ECM-7',
-      title: 'Order History',
-      description: 'Display user order history with tracking and status updates',
-      status: 'Done',
-      priority: 'Medium',
-      assignee: 'Tom Anderson',
-      category: 'Features',
-      updated: '2024-02-01'
-    },
-    {
-      id: 'ECM-8',
-      title: 'Product Reviews',
-      description: 'Implement product rating and review system',
-      status: 'Done',
-      priority: 'Low',
-      assignee: 'Emma Davis',
-      category: 'Features',
-      created: '2024-01-22',
-      updated: '2024-02-03'
-    },
-    {
-      id: 'ECM-9',
-      title: 'Admin Panel',
-      description: 'Create comprehensive admin interface for product and user management',
-      status: 'In Progress',
-      priority: 'High',
-      assignee: 'Alex Martinez',
-      category: 'Admin',
-      created: '2024-01-23',
-      updated: '2024-02-05'
-    },
-    {
-      id: 'ECM-10',
-      title: 'Inventory Management',
-      description: 'Build inventory tracking and management system',
-      status: 'To Do',
-      priority: 'Medium',
-      assignee: 'Chris Taylor',
-      category: 'Admin',
-      created: '2024-01-24',
-      updated: '2024-02-01'
-    },
-    {
-      id: 'ECM-11',
-      title: 'Email Notifications',
-      description: 'Setup automated email notifications for orders and updates',
-      status: 'To Do',
-      priority: 'Low',
-      assignee: 'Rachel White',
-      category: 'Features',
-      created: '2024-01-25',
-      updated: '2024-02-01'
-    },
-    {
-      id: 'ECM-12',
-      title: 'Analytics Dashboard',
-      description: 'Create comprehensive analytics and reporting dashboard',
-      status: 'To Do',
-      priority: 'Medium',
-      assignee: 'Kevin Lee',
-      category: 'Analytics',
-      created: '2024-01-26',
-      updated: '2024-02-01'
-    }
+     
   ];
 
   const topics = allTopics.length > 0 ? allTopics : initialTopics;
@@ -395,7 +276,8 @@ const Topics = () => {
                   {/* Updated */}
                   <div className="col-span-2">
                     <span className="text-sm text-gray-500">
-                      {new Date(topic.updated).toLocaleDateString()}
+                 {new Date(topic.updated).toLocaleDateString('en-GB')}
+
                     </span>
                   </div>
                 </div>
@@ -416,149 +298,17 @@ const Topics = () => {
         </div>
       </div>
 
-      {/* Create Topic Modal */}
-      {isCreateModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-screen overflow-y-auto">
-            <div className="px-6 py-4 border-b border-gray-200">
-              <div className="flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-gray-900">Create Topic</h2>
-                <button 
-                  onClick={() => setIsCreateModalOpen(false)}
-                  className="text-gray-400 hover:text-gray-600"
-                >
-                  <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-              </div>
-            </div>
-            
-            <form onSubmit={handleCreateTopic} className="p-6">
-              <div className="space-y-6">
-                {/* Title */}
-                <div>
-                  <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
-                    Title <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    id="title"
-                    name="title"
-                    value={formData.title}
-                    onChange={handleInputChange}
-                    required
-                    className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="Enter topic title..."
-                  />
-                </div>
+    {isCreateModalOpen && (
+  <TopicForm
+    isOpen={isCreateModalOpen}
+    setIsOpen={setIsCreateModalOpen}
+    formData={formData}
+    handleInputChange={handleInputChange}
+    handleCreateTopic={handleCreateTopic}
+  />
+)}
 
-                {/* Description */}
-                <div>
-                  <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
-                    Description <span className="text-red-500">*</span>
-                  </label>
-                  <textarea
-                    id="description"
-                    name="description"
-                    value={formData.description}
-                    onChange={handleInputChange}
-                    required
-                    rows={4}
-                    className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="Describe the topic requirements and functionality..."
-                  />
-                </div>
 
-                {/* Category and Priority Row */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-2">
-                      Category
-                    </label>
-                    <select
-                      id="category"
-                      name="category"
-                      value={formData.category}
-                      onChange={handleInputChange}
-                      className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                      <option value="Features">Features</option>
-                      <option value="Authentication">Authentication</option>
-                      <option value="UI/UX">UI/UX</option>
-                      <option value="Admin">Admin</option>
-                      <option value="Payment">Payment</option>
-                      <option value="Analytics">Analytics</option>
-                    </select>
-                  </div>
-                  
-                  <div>
-                    <label htmlFor="priority" className="block text-sm font-medium text-gray-700 mb-2">
-                      Priority
-                    </label>
-                    <select
-                      id="priority"
-                      name="priority"
-                      value={formData.priority}
-                      onChange={handleInputChange}
-                      className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                      <option value="Low">Low</option>
-                      <option value="Medium">Medium</option>
-                      <option value="High">High</option>
-                      <option value="Critical">Critical</option>
-                    </select>
-                  </div>
-                </div>
-
-                {/* Assignee */}
-                <div>
-                  <label htmlFor="assignee" className="block text-sm font-medium text-gray-700 mb-2">
-                    Assignee
-                  </label>
-                  <select
-                    id="assignee"
-                    name="assignee"
-                    value={formData.assignee}
-                    onChange={handleInputChange}
-                    className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    <option value="John Doe">John Doe</option>
-                    <option value="Jane Smith">Jane Smith</option>
-                    <option value="Mike Johnson">Mike Johnson</option>
-                    <option value="Sarah Wilson">Sarah Wilson</option>
-                    <option value="David Brown">David Brown</option>
-                    <option value="Lisa Garcia">Lisa Garcia</option>
-                    <option value="Tom Anderson">Tom Anderson</option>
-                    <option value="Emma Davis">Emma Davis</option>
-                    <option value="Alex Martinez">Alex Martinez</option>
-                    <option value="Chris Taylor">Chris Taylor</option>
-                    <option value="Rachel White">Rachel White</option>
-                    <option value="Kevin Lee">Kevin Lee</option>
-                  </select>
-                </div>
-              </div>
-
-              {/* Form Actions */}
-              <div className="flex items-center justify-end space-x-3 mt-8 pt-6 border-t border-gray-200">
-                <button
-                  type="button"
-                  onClick={() => setIsCreateModalOpen(false)}
-                  className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  Create Topic
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

@@ -1,161 +1,41 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import { Plus, Search, Filter, Grid, List, MoreVertical, Users, Star, X, ChevronDown, Check } from 'lucide-react';
+import ProjectFormModal from '../components/Projectform/form';
+
 
 const JiraProjectsGrid = () => {
   const [projects, setProjects] = useState([
-    { id: 1, name: 'E-commerce Platform', key: 'ECP', type: 'Software', members: 12, issues: 45, progress: 78, starred: true, color: 'bg-gradient-to-br from-blue-400 to-blue-600', assignedEmployees: [] },
-    { id: 2, name: 'Mobile App Redesign', key: 'MAR', type: 'Design', members: 8, issues: 23, progress: 45, starred: false, color: 'bg-gradient-to-br from-purple-400 to-purple-600', assignedEmployees: [] },
-    { id: 3, name: 'Data Analytics Dashboard', key: 'DAD', type: 'Analytics', members: 6, issues: 17, progress: 92, starred: true, color: 'bg-gradient-to-br from-green-400 to-green-600', assignedEmployees: [] },
-    { id: 4, name: 'Customer Support Portal', key: 'CSP', type: 'Software', members: 10, issues: 31, progress: 65, starred: false, color: 'bg-gradient-to-br from-orange-400 to-orange-600', assignedEmployees: [] },
-    { id: 5, name: 'Marketing Campaign', key: 'MC', type: 'Marketing', members: 5, issues: 12, progress: 34, starred: false, color: 'bg-gradient-to-br from-pink-400 to-pink-600', assignedEmployees: [] },
-    { id: 6, name: 'API Integration', key: 'API', type: 'Backend', members: 4, issues: 19, progress: 87, starred: true, color: 'bg-gradient-to-br from-teal-400 to-teal-600', assignedEmployees: [] },
-    { id: 7, name: 'Security Audit', key: 'SA', type: 'Security', members: 3, issues: 8, progress: 23, starred: false, color: 'bg-gradient-to-br from-red-400 to-red-600', assignedEmployees: [] },
-    { id: 8, name: 'Performance Optimization', key: 'PO', type: 'DevOps', members: 7, issues: 25, progress: 56, starred: false, color: 'bg-gradient-to-br from-indigo-400 to-indigo-600', assignedEmployees: [] },
-    { id: 9, name: 'Performance Optimization', key: 'POO', type: 'DevOps', members: 5, issues: 245, progress: 96, starred: false, color: 'bg-gradient-to-br from-pink-400 to-black-600', assignedEmployees: [] }
+    { id: 1, name: 'E-commerce Platform', key: 'ECP', type: 'Software', members: 12, issues: 45, progress: 78, color: 'bg-gradient-to-br from-blue-400 to-blue-600', assignedEmployees: [] },
+    { id: 2, name: 'Mobile App Redesign', key: 'MAR', type: 'Design', members: 8, issues: 23, progress: 45, color: 'bg-gradient-to-br from-purple-400 to-purple-600', assignedEmployees: [] },
+    { id: 3, name: 'Data Analytics Dashboard', key: 'DAD', type: 'Analytics', members: 6, issues: 17, progress: 92,color: 'bg-gradient-to-br from-green-400 to-green-600', assignedEmployees: [] },
+    { id: 4, name: 'Customer Support Portal', key: 'CSP', type: 'Software', members: 10, issues: 31, progress: 65,color: 'bg-gradient-to-br from-orange-400 to-orange-600', assignedEmployees: [] },
+    { id: 5, name: 'Marketing Campaign', key: 'MC', type: 'Marketing', members: 5, issues: 12, progress: 34,color: 'bg-gradient-to-br from-pink-400 to-pink-600', assignedEmployees: [] },
+    { id: 6, name: 'API Integration', key: 'API', type: 'Backend', members: 4, issues: 19, progress: 87,color: 'bg-gradient-to-br from-teal-400 to-teal-600', assignedEmployees: [] },
+    { id: 7, name: 'Security Audit', key: 'SA', type: 'Security', members: 3, issues: 8, progress: 23,color: 'bg-gradient-to-br from-red-400 to-red-600', assignedEmployees: [] },
+    { id: 8, name: 'Performance Optimization', key: 'PO', type: 'DevOps', members: 7, issues: 25, progress: 56,color: 'bg-gradient-to-br from-indigo-400 to-indigo-600', assignedEmployees: [] },
+    { id: 9, name: 'Performance Optimization', key: 'POO', type: 'DevOps', members: 5, issues: 245, progress: 96, color: 'bg-gradient-to-br from-pink-400 to-black-600', assignedEmployees: [] }
   ]);
 
   const [viewMode, setViewMode] = useState('grid');
   const [searchTerm, setSearchTerm] = useState('');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [formData, setFormData] = useState({
-    name: '',
-    key: '',
-    type: 'Software',
-    description: '',
-    members: 1,
-    selectedEmployees: []
-  }); 
 
-  const [employeeList, setEmployeeList] = useState([]);
-  const [isEmployeeDropdownOpen, setIsEmployeeDropdownOpen] = useState(false);
-
- 
-  useEffect(() => {
-     
-    
-    fetch('http://localhost:8080/employees')
-      .then(res => res.json())
-      .then(data => {
-        setEmployeeList(data.employees);
-      })
-      .catch(error => {
-        console.error('Error fetching employees:', error);
-      });
-    
-  }, []);
-
-  const projectTypes = ['Software', 'Design', 'Analytics', 'Marketing', 'Backend', 'Security', 'DevOps'];
-  const gradientColors = [
-    'bg-gradient-to-br from-blue-400 to-blue-600',
-    'bg-gradient-to-br from-purple-400 to-purple-600',
-    'bg-gradient-to-br from-green-400 to-green-600',
-    'bg-gradient-to-br from-orange-400 to-orange-600',
-    'bg-gradient-to-br from-pink-400 to-pink-600',
-    'bg-gradient-to-br from-teal-400 to-teal-600',
-    'bg-gradient-to-br from-red-400 to-red-600',
-    'bg-gradient-to-br from-indigo-400 to-indigo-600',
-    'bg-gradient-to-br from-yellow-400 to-yellow-600',
-    'bg-gradient-to-br from-cyan-400 to-cyan-600'
-  ];
-
+  
   const filteredProjects = projects.filter(project =>
     project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     project.key.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const toggleStar = (projectId) => {
-    setProjects(projects.map(project =>
-      project.id === projectId ? { ...project, starred: !project.starred } : project
-    ));
-  };
+ 
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
-  const generateProjectKey = (name) => {
-    return name
-      .split(' ')
-      .map(word => word.charAt(0).toUpperCase())
-      .join('')
-      .substring(0, 4);
-  };
-
-  const handleEmployeeSelect = (employee) => {
-    setFormData(prev => {
-      const isSelected = prev.selectedEmployees.some(emp => emp.id === employee.id);
-      
-      if (isSelected) {
-         
-        return {
-          ...prev,
-          selectedEmployees: prev.selectedEmployees.filter(emp => emp.id !== employee.id)
-        };
-      } else {
-         
-        return {
-          ...prev,
-          selectedEmployees: [...prev.selectedEmployees, employee]
-        };
-      }
-    });
-  };
-
-  const handleCreateProject = () => {
-    if (!formData.name.trim()) {
-      alert('Project name is required');
-      return;
-    }
-
-    if (!formData.type) {
-      alert('Project type is required');
-      return;
-    }
-    
-    const newProject = {
-      id: projects.length + 1,
-      name: formData.name,
-      key: formData.key || generateProjectKey(formData.name),
-      type: formData.type,
-      members: formData.selectedEmployees.length || parseInt(formData.members) || 1,
-      issues: 0,
-      progress: 0,
-      starred: false,
-      color: gradientColors[Math.floor(Math.random() * gradientColors.length)],
-      assignedEmployees: formData.selectedEmployees
-    };
-
-    setProjects([...projects, newProject]);
-    setIsCreateModalOpen(false);
-    
-    // Reset form
-    setFormData({
-      name: '',
-      key: '',
-      type: 'Software',
-      description: '',
-      members: 1,
-      selectedEmployees: []
-    });
-    setIsEmployeeDropdownOpen(false);
-  };
 
   const ProjectCard = ({ project }) => (
     <div className="bg-white rounded-2xl border border-gray-200 hover:border-blue-400 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden group h-full">
       <div className={`h-20 ${project.color} relative overflow-hidden`}>
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-pulse"></div>
         <div className="absolute top-3 right-3 flex space-x-1">
-          <button
-            onClick={() => toggleStar(project.id)}
-            className={`p-1 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-md transition-colors ${project.starred ? 'text-yellow-300' : 'text-white'}`}
-          >
-            <Star className={`w-4 h-4 ${project.starred ? 'fill-current' : ''}`} />
-          </button>
+          
           <button className="p-1 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-md text-white">
             <MoreVertical className="w-4 h-4" />
           </button>
@@ -299,12 +179,7 @@ const JiraProjectsGrid = () => {
                   <div className="text-sm text-gray-600">{project.members}</div>
                   <div className="text-sm text-gray-600">{project.issues}</div>
                   <div className="flex items-center space-x-2">
-                    <button
-                      onClick={() => toggleStar(project.id)}
-                      className={`p-1 rounded transition-colors ${project.starred ? 'text-yellow-500' : 'text-gray-400 hover:text-gray-600'}`}
-                    >
-                      <Star className={`w-4 h-4 ${project.starred ? 'fill-current' : ''}`} />
-                    </button>
+                     
                     <button className="p-1 rounded text-gray-400 hover:text-gray-600">
                       <MoreVertical className="w-4 h-4" />
                     </button>
@@ -321,195 +196,17 @@ const JiraProjectsGrid = () => {
             <div className="text-sm text-gray-400">Try changing your search criteria</div>
           </div>
         )}
+        {isCreateModalOpen && (
+  <ProjectFormModal
+    onClose={() => setIsCreateModalOpen(false)}
+    onCreate={(newProject) => setProjects([...projects, newProject])}
+  />
+)}
+
       </div>
-
-    
-      {isCreateModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-screen overflow-y-auto">
-            <div className="px-6 py-4 border-b border-gray-200">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h2 className="text-2xl font-bold text-gray-900">Create New Project</h2>
-                  <p className="text-gray-600 text-sm mt-1">Set up your project to start tracking progress</p>
-                </div>
-                <button 
-                  onClick={() => setIsCreateModalOpen(false)}
-                  className="text-gray-400 hover:text-gray-600 p-2 hover:bg-gray-100 rounded-full"
-                >
-                  <X className="h-6 w-6" />
-                </button>
-              </div>
-            </div>
-            
-            <div className="p-6">
-              <div className="space-y-6">
-                {/* Project Name */}
-                <div>
-                  <label htmlFor="name" className="block text-sm font-semibold text-gray-700 mb-2">
-                    Project Name <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleInputChange}
-                    required
-                    className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="Enter project name..."
-                  />
-                </div>
-
-                {/* Project Key and Type Row */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label htmlFor="key" className="block text-sm font-semibold text-gray-700 mb-2">
-                      Project Key
-                    </label>
-                    <input
-                      type="text"
-                      id="key"
-                      name="key"
-                      value={formData.key}
-                      onChange={handleInputChange}
-                      className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent uppercase"
-                      placeholder={formData.name ? generateProjectKey(formData.name) : "AUTO"}
-                      maxLength="10"
-                    />
-                    <p className="text-xs text-gray-500 mt-1">Leave blank to auto-generate from project name</p>
-                  </div>
-                  
-                  <div>
-                    <label htmlFor="type" className="block text-sm font-semibold text-gray-700 mb-2">
-                      Project Type <span className="text-red-500">*</span>
-                    </label>
-                    <select
-                      id="type"
-                      name="type"
-                      value={formData.type}
-                      onChange={handleInputChange}
-                      className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                      {projectTypes.map(type => (
-                        <option key={type} value={type}>{type}</option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-
-                {/* Description */}
-                <div>
-                  <label htmlFor="description" className="block text-sm font-semibold text-gray-700 mb-2">
-                    Description
-                  </label>
-                  <textarea
-                    id="description"
-                    name="description"
-                    value={formData.description}
-                    onChange={handleInputChange}
-                    rows={4}
-                    className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="Describe your project goals and objectives..."
-                  />
-                </div>
-
-                {/* Employee Assignment */}
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Assign Team Members <span className="text-red-500">*</span>
-                  </label>
-                  <div className="relative">
-                    <button
-                      type="button"
-                      onClick={() => setIsEmployeeDropdownOpen(!isEmployeeDropdownOpen)}
-                      className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent flex items-center justify-between bg-white"
-                    >
-                      <span className="text-left">
-                        {formData.selectedEmployees.length === 0 
-                          ? "Select team members..." 
-                          : `${formData.selectedEmployees.length} employee${formData.selectedEmployees.length > 1 ? 's' : ''} selected`
-                        }
-                      </span>
-                      <ChevronDown className={`w-5 h-5 text-gray-400 transition-transform ${isEmployeeDropdownOpen ? 'rotate-180' : ''}`} />
-                    </button>
-
-                    {isEmployeeDropdownOpen && (
-                      <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-xl shadow-lg max-h-60 overflow-y-auto">
-                        {employeeList.length > 0 ? (
-                          employeeList.map((employee) => (
-                            <div
-                              key={employee.id}
-                              onClick={() => handleEmployeeSelect(employee)}
-                              className="flex items-center justify-between p-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0"
-                            >
-                              <div className="flex-1">
-                                <div className="font-medium text-gray-900">{employee.name || employee.username}</div>
-                                <div className="text-sm text-gray-500">{employee.email}</div>
-                              
-                              </div>
-                              {formData.selectedEmployees.some(emp => emp.id === employee.id) && (
-                                <Check className="w-5 h-5 text-blue-500 flex-shrink-0" />
-                              )}
-                            </div>
-                          ))
-                        ) : (
-                          <div className="p-4 text-center text-gray-500">
-                            No employees available
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Selected Employees Preview */}
-                  {formData.selectedEmployees.length > 0 && (
-                    <div className="mt-3">
-                      <p className="text-xs text-gray-600 mb-2">Selected team members:</p>
-                      <div className="flex flex-wrap gap-2">
-                        {formData.selectedEmployees.map((employee) => (
-                          <div
-                            key={employee.id}
-                            className="flex items-center bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-sm"
-                          >
-                            <span>{employee.name || employee.username}</span>
-                            <button
-                              type="button"
-                              onClick={() => handleEmployeeSelect(employee)}
-                              className="ml-2 text-blue-500 hover:text-blue-700"
-                            >
-                              <X className="w-4 h-4" />
-                            </button>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Form Actions */}
-              <div className="flex items-center justify-end space-x-3 mt-8 pt-6 border-t border-gray-200">
-                <button
-                  type="button"
-                  onClick={() => setIsCreateModalOpen(false)}
-                  className="px-6 py-3 border border-gray-300 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  onClick={handleCreateProject}
-                  className="px-6 py-3 bg-blue-600 text-white rounded-xl text-sm font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all shadow"
-                >
-                  Create Project
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      
     </div>
+ 
   );
 };
 
