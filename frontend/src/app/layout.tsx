@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Inter } from 'next/font/google'
+import { AuthProvider } from './context/AuthContext';
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -33,9 +34,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+          <AuthProvider>
         {children}
+        </AuthProvider>
       </body>
     </html>
   );

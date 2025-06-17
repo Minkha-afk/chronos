@@ -1,19 +1,22 @@
-"use client";
-import React, { useState, useEffect } from 'react';
-import { Plus, Search, Filter, Grid, List, MoreVertical, Users, Star, X, ChevronDown, Check } from 'lucide-react';
+'use client';
+
+import React, { useState } from 'react';
+import { Plus, Search, Grid, List } from 'lucide-react';
 import ProjectFormModal from '../components/Projectform/form';
+import { useAuth } from '../context/AuthContext'; // adjust path if needed
+import {  Filter, MoreVertical, Users } from 'lucide-react';
 
 
 const JiraProjectsGrid = () => {
   const [projects, setProjects] = useState([
     { id: 1, name: 'E-commerce Platform', key: 'ECP', type: 'Software', members: 12, issues: 45, progress: 78, color: 'bg-gradient-to-br from-blue-400 to-blue-600', assignedEmployees: [] },
     { id: 2, name: 'Mobile App Redesign', key: 'MAR', type: 'Design', members: 8, issues: 23, progress: 45, color: 'bg-gradient-to-br from-purple-400 to-purple-600', assignedEmployees: [] },
-    { id: 3, name: 'Data Analytics Dashboard', key: 'DAD', type: 'Analytics', members: 6, issues: 17, progress: 92,color: 'bg-gradient-to-br from-green-400 to-green-600', assignedEmployees: [] },
-    { id: 4, name: 'Customer Support Portal', key: 'CSP', type: 'Software', members: 10, issues: 31, progress: 65,color: 'bg-gradient-to-br from-orange-400 to-orange-600', assignedEmployees: [] },
-    { id: 5, name: 'Marketing Campaign', key: 'MC', type: 'Marketing', members: 5, issues: 12, progress: 34,color: 'bg-gradient-to-br from-pink-400 to-pink-600', assignedEmployees: [] },
-    { id: 6, name: 'API Integration', key: 'API', type: 'Backend', members: 4, issues: 19, progress: 87,color: 'bg-gradient-to-br from-teal-400 to-teal-600', assignedEmployees: [] },
-    { id: 7, name: 'Security Audit', key: 'SA', type: 'Security', members: 3, issues: 8, progress: 23,color: 'bg-gradient-to-br from-red-400 to-red-600', assignedEmployees: [] },
-    { id: 8, name: 'Performance Optimization', key: 'PO', type: 'DevOps', members: 7, issues: 25, progress: 56,color: 'bg-gradient-to-br from-indigo-400 to-indigo-600', assignedEmployees: [] },
+    { id: 3, name: 'Data Analytics Dashboard', key: 'DAD', type: 'Analytics', members: 6, issues: 17, progress: 92, color: 'bg-gradient-to-br from-green-400 to-green-600', assignedEmployees: [] },
+    { id: 4, name: 'Customer Support Portal', key: 'CSP', type: 'Software', members: 10, issues: 31, progress: 65, color: 'bg-gradient-to-br from-orange-400 to-orange-600', assignedEmployees: [] },
+    { id: 5, name: 'Marketing Campaign', key: 'MC', type: 'Marketing', members: 5, issues: 12, progress: 34, color: 'bg-gradient-to-br from-pink-400 to-pink-600', assignedEmployees: [] },
+    { id: 6, name: 'API Integration', key: 'API', type: 'Backend', members: 4, issues: 19, progress: 87, color: 'bg-gradient-to-br from-teal-400 to-teal-600', assignedEmployees: [] },
+    { id: 7, name: 'Security Audit', key: 'SA', type: 'Security', members: 3, issues: 8, progress: 23, color: 'bg-gradient-to-br from-red-400 to-red-600', assignedEmployees: [] },
+    { id: 8, name: 'Performance Optimization', key: 'PO', type: 'DevOps', members: 7, issues: 25, progress: 56, color: 'bg-gradient-to-br from-indigo-400 to-indigo-600', assignedEmployees: [] },
     { id: 9, name: 'Performance Optimization', key: 'POO', type: 'DevOps', members: 5, issues: 245, progress: 96, color: 'bg-gradient-to-br from-pink-400 to-black-600', assignedEmployees: [] }
   ]);
 
@@ -21,14 +24,16 @@ const JiraProjectsGrid = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
-  
+  const { user } = useAuth(); // ✅ get user from context
+
   const filteredProjects = projects.filter(project =>
     project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     project.key.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
- 
-
+  const handleCreate = (newProject) => {
+    setProjects([...projects, newProject]);
+  };
 
   const ProjectCard = ({ project }) => (
     <div className="bg-white rounded-2xl border border-gray-200 hover:border-blue-400 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden group h-full">
@@ -92,13 +97,17 @@ const JiraProjectsGrid = () => {
             <h1 className="text-3xl font-bold text-gray-900">Projects</h1>
             <p className="text-gray-600 text-sm">Manage and track all your projects in one place</p>
           </div>
-          <button 
-            onClick={() => setIsCreateModalOpen(true)}
-            className="bg-blue-600 text-white px-4 py-2 rounded-xl hover:bg-blue-700 transition-all shadow flex items-center space-x-2"
-          >
-            <Plus className="w-5 h-5" />
-            <span>Create Project</span>
-          </button>
+          
+           {user?.role === 'admin' && (
+        <button 
+          onClick={() => setIsCreateModalOpen(true)}
+          className="bg-blue-600 text-white px-4 py-2 rounded-xl hover:bg-blue-700 transition-all shadow flex items-center space-x-2"
+        >
+          <Plus className="w-5 h-5" />
+          <span>Create Project</span>
+        </button>
+      )}
+           
         </div>
 
         <div className="flex items-center justify-between">

@@ -11,11 +11,13 @@ import {
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
+import { useAuth } from '../context/AuthContext'; // ✅ add this
 
 export default function LoginPage() {
   const [form, setForm] = useState({ username: '', password: '' });
   const [message, setMessage] = useState('');
   const router = useRouter();
+  const { setUser } = useAuth(); // ✅ grab setUser from context
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -34,22 +36,17 @@ export default function LoginPage() {
       setMessage(data.message);
 
       if (res.ok && data.role) {
-         
-        localStorage.setItem('userRole', data.role);
-
-        
-        localStorage.setItem('username', data.username);
-
-        setMessage('Login successful! Redirecting...');
-        router.push('/dashboard');
+        setUser({
+          username: data.username,
+          role: data.role,
+        });
+        router.push('/project');
       }
     } catch (err) {
       console.error('Login error:', err);
       setMessage('Login failed. Please try again.');
     }
   };
-
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}
