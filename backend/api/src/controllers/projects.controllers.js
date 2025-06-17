@@ -11,6 +11,7 @@ const getProjects = async (req, res) => {
 };
 
 const slugify = (text) =>
+/*{this is a change}*/
   text
     .toString()
     .toLowerCase()
